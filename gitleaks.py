@@ -1,6 +1,8 @@
 import enum
+import tomllib
 
 from enum import StrEnum
+from typing import BinaryIO
 
 from pydantic import BaseModel
 
@@ -21,7 +23,7 @@ class AllowlistCondition(StrEnum):
 
 
 class Allowlist(BaseModel):
-    condition: AllowlistCondition
+    condition: AllowlistCondition | None = None
     regexTarget: RegexTarget | None = None
     paths: list[Pattern] | None = None
     regexes: list[Pattern] | None = None
@@ -49,3 +51,9 @@ class Rule(BaseModel):
 
 class Config(BaseModel):
     rules: list[Rule]
+
+
+def load(fp: BinaryIO) -> Config:
+    """Load a Gitleaks config from a TOML file."""
+    data = tomllib.load(fp)
+    return Config.model_validate(data)

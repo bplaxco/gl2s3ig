@@ -11,7 +11,7 @@ from pydantic import BeforeValidator
 from pydantic import Field
 from pydantic import HttpUrl
 
-from sssig_rules import hscheck  # type: ignore
+import hscheck  # type: ignore
 
 
 def ensure_valid_range(value: int | list[int]) -> list[int]:
