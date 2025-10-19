@@ -5,7 +5,7 @@ An experiment with converting Gitleaks config to the SSSIG format.
 ## Example Usage
 
 ```sh
-# Sreate/sync the venv
+# Create/sync the venv
 uv sync
 
 # Build the hyper scan regex compat check lib
