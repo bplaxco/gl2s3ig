@@ -67,7 +67,7 @@ def split_regexp(group: int, regexp: str) -> (str, str, str):
 
         raise ValueError("could not find group")
 
-    return regexp[:start_pos], regexp[start_pos:end_pos], regexp[end_pos:]
+    return regexp[:start_pos], regexp[start_pos+1:end_pos-1], regexp[end_pos:]
 
 
 if __name__ == "__main__":
