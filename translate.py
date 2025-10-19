@@ -4,6 +4,8 @@ Translate Gitleaks rules to SSSIG format.
 import hashlib
 import base64
 import re
+from re import _parser as re_parser
+from regrp import split_regexp
 
 import gitleaks
 import sssig
@@ -24,20 +26,19 @@ def generate_sssig_id(gitleaks_id: str) -> str:
     return f"S3IG{b32[:16]}"
 
 
-def split_regex(regex: str, secret_group: int = 1) -> tuple[str | None, str, str | None]:
+def split_regex(regex: str, secret_group: int = 0) -> tuple[str | None, str, str | None]:
     """
     Split a gitleaks regex into prefix, target, and suffix based on the capture group.
 
     Args:
         regex: The full regex pattern
-        secret_group: The capture group number (default 1)
+        secret_group: The capture group number (default 0)
 
     Returns:
         Tuple of (prefix_pattern, target_pattern, suffix_pattern)
     """
-    # TODO: Implement proper regex parsing to extract the capture group
-    # For now, just return the full regex as the target pattern
-    return None, regex, None
+    prefix, target, suffix = split_regexp(secret_group, regex)
+    return prefix or None, target, suffix or None
 
 
 def translate_allowlist(allowlist: gitleaks.Allowlist) -> sssig.ExcludeFilter:
