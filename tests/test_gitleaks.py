@@ -55,6 +55,47 @@ def test_gitleaks_rule_with_allowlist():
     assert allowlist.condition in (None, gitleaks.AllowlistCondition.AND, gitleaks.AllowlistCondition.OR)
 
 
+def test_gitleaks_rule_with_single_allowlist():
+    """Test that rules with a single allowlist (not allowlists) are parsed correctly."""
+    with open("tests/fixtures/gitleaks_8.27.0.toml", "rb") as fp:
+        config = gitleaks.load(fp)
+
+    # Find the Authorization Header rule which uses [rules.allowlist] (singular)
+    auth_rule = next(r for r in config.rules if r.id == "QqS4RvI6Zmg")
+
+    assert auth_rule.description == "Authorization Header"
+    assert auth_rule.allowlists is not None
+    assert len(auth_rule.allowlists) == 1
+
+    # The single allowlist should be converted to a list with one item
+    allowlist = auth_rule.allowlists[0]
+    assert isinstance(allowlist, gitleaks.Allowlist)
+    assert allowlist.stopwords is not None
+    assert "admin" in allowlist.stopwords
+    assert allowlist.regexTarget == gitleaks.RegexTarget.LINE
+
+
+def test_gitleaks_rule_with_multiple_allowlists():
+    """Test that rules with multiple allowlists using [[rules.allowlists]] are parsed correctly."""
+    with open("tests/fixtures/gitleaks_8.27.0.toml", "rb") as fp:
+        config = gitleaks.load(fp)
+
+    # Find the AWS IAM rule which uses [[rules.allowlists]] (plural, array format)
+    aws_rule = next(r for r in config.rules if r.id == "LAJoYTdoQH4")
+
+    assert aws_rule.description == "AWS IAM Unique Identifier"
+    assert aws_rule.allowlists is not None
+    assert len(aws_rule.allowlists) == 1
+
+    # Check the allowlist structure
+    allowlist = aws_rule.allowlists[0]
+    assert isinstance(allowlist, gitleaks.Allowlist)
+    assert allowlist.stopwords is not None
+    assert "example" in allowlist.stopwords
+    assert allowlist.regexTarget == gitleaks.RegexTarget.LINE
+    assert allowlist.condition is None  # We made condition optional
+
+
 def test_gitleaks_rule_with_path():
     """Test that rules with path patterns are parsed correctly."""
     with open("tests/fixtures/gitleaks_8.27.0.toml", "rb") as fp:

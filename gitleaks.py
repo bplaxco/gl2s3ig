@@ -5,6 +5,7 @@ from enum import StrEnum
 from typing import BinaryIO
 
 from pydantic import BaseModel
+from pydantic import model_validator
 
 from sssig import OptionalPositiveInt
 from sssig import OptionalPositiveFloat
@@ -47,6 +48,15 @@ class Rule(BaseModel):
     skipReport: bool | None = None
     allowlists: list[Allowlist] | None = None
     required: list[Required] | None = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def convert_allowlist_to_allowlists(cls, data):
+        """Convert single allowlist to allowlists list."""
+        if isinstance(data, dict) and 'allowlist' in data:
+            # Convert single allowlist to list of allowlists
+            data['allowlists'] = [data.pop('allowlist')]
+        return data
 
 
 class Config(BaseModel):
