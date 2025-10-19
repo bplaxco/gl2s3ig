@@ -1,6 +1,6 @@
 # Gl2S3IG (Gitleaks to SSSIG)
 
-An experiment with converting Gitleaks config to the SSSIG format.
+An experiment with converting Gitleaks config to the [SSSIG format](https://github.com/secret-scanning-sig/rules).
 
 ## Example Usage
 
