@@ -1,8 +1,10 @@
 #!./.venv/bin/python3
+import yaml
 from argparse import ArgumentParser
 from pathlib import Path
 
 import gitleaks
+import translate
 
 
 def new_parser() -> ArgumentParser:
@@ -27,6 +29,22 @@ def main() -> None:
         config = gitleaks.load(fp)
 
     print(f"Loaded {len(config.rules)} rules from {args.src}")
+
+    # Translate to SSSIG format
+    sssig_rules = translate.translate_config(config)
+
+    print(f"Translated {len(sssig_rules.rules)} rules to SSSIG format")
+
+    # Write to destination
+    with args.dst.open("w") as fp:
+        yaml.dump(
+            sssig_rules.model_dump(mode="json", exclude_none=True),
+            fp,
+            default_flow_style=False,
+            sort_keys=False,
+        )
+
+    print(f"Wrote SSSIG rules to {args.dst}")
 
 
 if __name__ == "__main__":
