@@ -8,7 +8,7 @@ An experiment with converting Gitleaks config to the SSSIG format.
 # Create/sync the venv
 uv sync
 
-# Build the hyper scan regex compat check lib
+# Build the HyperScan regex compat check lib
 make compile
 
 # Run the conversion
